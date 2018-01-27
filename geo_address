@@ -1,0 +1,30 @@
+import numpy as np
+import pandas as pd
+from pygeocoder import Geocoder
+from pygeocoder import GeocoderError
+import csv
+
+#import csv file
+file_csv = pd.read_csv('/Users/ishita/Downloads/Addresses.csv', sep=',', header=None, keep_default_na=False)
+
+#finding lat long of and address
+def geofinder(element, result):
+    try:
+        data = Geocoder.geocode(element)
+        result = data.coordinates
+        return result
+    except GeocoderError:
+        return result;
+
+#traversing through the csv, taking each address and finding lat long.
+for i in range (570,650):
+    x=list()
+    temp=["not found"]
+    for j in range (22,0,-1):
+        if file_csv[j][i]!="":
+            x.append(file_csv[j][i])
+            temp = geofinder((str(x).strip('[]')), temp)    #x is a list and temp stores co-ords
+    #write all the lat long in lat_long.csv file
+    ofile  = open('lat_long.csv', "a")
+    writer = csv.writer(ofile)
+    writer.writerow(temp)
